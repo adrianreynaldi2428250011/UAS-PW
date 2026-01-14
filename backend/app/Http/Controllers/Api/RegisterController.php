@@ -17,39 +17,33 @@ class RegisterController extends Controller
      */
     public function __invoke(Request $request)
     {
-        //set validation
+        // validation
         $validator = Validator::make($request->all(), [
-            'name'      => 'required',
-            'email'     => 'required|email|unique:users',
-            'password'  => 'required|min:8|confirmed'
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:users',
+            'password' => 'required|min:8|confirmed',
         ]);
 
-        //if validation fails
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
-        //create user
+        // create user
         $user = User::create([
-            'name'      => $request->name,
-            'email'     => $request->email,
-            'password'  => bcrypt($request->password)
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'password' => bcrypt($request->password),
         ]);
 
-        $user->addRole($request->role);
+        // SET ROLE ADMIN OTOMATIS
+        // (sesuai dengan sistem role yang kamu pakai)
+        $user->addRole('admin');
 
-        //return response JSON user is created
-        if($user) {
-            return response()->json([
-                'success' => true,
-                'user'    => $user,
-                'role'    => $request->role
-            ], 201);
-        }
-
-        //return JSON process insert failed 
+        // response success
         return response()->json([
-            'success' => false,
-        ], 409);
+            'success' => true,
+            'user'    => $user,
+            'role'    => 'admin',
+        ], 201);
     }
 }

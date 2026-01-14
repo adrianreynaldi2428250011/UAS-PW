@@ -19,57 +19,38 @@ export default function Register() {
         email: "",
         password: "",
         password_confirmation: "",
-        role: "",
     });
-
-    const initialFormData = {
-        name: "",
-        email: "",
-        password: "",
-        password_confirmation: "",
-        role: "",
-    };
 
     const [formErrors, setFormErrors] = useState({
         name: "",
         email: "",
         password: "",
         password_confirmation: "",
-        role: "",
     });
 
     const validateForm = () => {
         let errors = {};
         let formIsValid = true;
 
-        // Validate input name
         if (!formData.name) {
             formIsValid = false;
             errors.name = "Full name is required";
         }
 
-        // Validate input description
         if (!formData.email) {
             formIsValid = false;
             errors.email = "Email is required";
         }
 
-        // Validate input description
         if (!formData.password) {
             formIsValid = false;
             errors.password = "Password is required";
         }
 
-        // Validate input description
         if (!formData.password_confirmation) {
             formIsValid = false;
-            errors.password_confirmation = "Confirmation Password is required";
-        }
-
-        // Validate input description
-        if (!formData.role) {
-            formIsValid = false;
-            errors.role = "Role is required";
+            errors.password_confirmation =
+                "Confirmation Password is required";
         }
 
         setFormErrors(errors);
@@ -101,25 +82,18 @@ export default function Register() {
                         }).then(() => {
                             navigate("/");
                         });
-                    } else {
-                        throw new Error("Network response was not ok");
                     }
                 })
                 .catch((error) => {
-                    var err = error.response.data;
-                    if (err.email) {
-                        MySwal.fire({
-                            title: "Failed!",
-                            text: err.email,
-                            icon: "error",
-                        });
-                    } else if (err.password) {
-                        MySwal.fire({
-                            title: "Failed!",
-                            text: err.password,
-                            icon: "error",
-                        });
-                    }
+                    const err = error.response?.data || {};
+                    MySwal.fire({
+                        title: "Failed!",
+                        text:
+                            err.email ||
+                            err.password ||
+                            "Registration failed",
+                        icon: "error",
+                    });
                 });
         }
     };
@@ -167,29 +141,6 @@ export default function Register() {
                             />
 
                             <div className="form-group">
-                                <label htmlFor="role">Role user</label>
-                                <select
-                                    name="role"
-                                    id="role"
-                                    className={`form-control ${
-                                        formErrors.role ? "is-invalid" : ""
-                                    }`}
-                                    value={formData.role || ""}
-                                    onChange={handleInputChange}
-                                >
-                                    {/* <option selected>
-                                        -- Admin --
-                                    </option> */}
-                                    <option value="admin">Admin</option>
-                                </select>
-                                {formErrors.role && (
-                                    <div className="invalid-feedback">
-                                        {formErrors.role}
-                                    </div>
-                                )}
-                            </div>
-
-                            <div className="form-group">
                                 <button className="btn btn-lg btn-block btn-primary tw-text-white">
                                     Register
                                 </button>
@@ -197,9 +148,11 @@ export default function Register() {
                         </form>
                     </div>
                 </div>
+
                 <div className="mt-5 text-muted text-center">
                     Have an account? <Link to="/">Login here</Link>
                 </div>
+
                 <div className="simple-footer">
                     Copyright &copy; SomeStock 2025
                 </div>
